@@ -1,0 +1,16 @@
+.favoritesCount::after {
+	content: attr(data-count);
+	display: block;
+	font-size: small;
+	text-align: center;
+	font-weight: bold;
+	line-height: 15px;
+	color: white;
+	width: 15px;
+	height: 15px;
+	background-color: black;
+	border-radius: 50%;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}

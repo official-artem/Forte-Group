@@ -1,51 +1,52 @@
-import { Input, List, ListItem, Menu, Text, VStack } from '@chakra-ui/react';
-import { memo, useState } from 'react';
-
-const fakeNames = [
-	'John Doe',
-	'Jane Smith',
-	'Alice Johnson',
-	'Bob Williams',
-	'Emma Brown',
-	'Michael Davis',
-	'Olivia Wilson',
-	'James Taylor',
-];
+import { Input, InputGroup, InputLeftElement, InputRightElement, List, ListItem, Menu, Spinner, Text, VStack } from '@chakra-ui/react';
+import { memo, useCallback, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import useCities from '../../hooks/useCities';
+import useDebounce from '../../hooks/useDebounce';
+import { CiSearch } from "react-icons/ci";
+import { addToFavorites } from '../../redux/slices/favorites.slice';
+import { City } from '../../types/city.type';
+import { useAppSelector } from '../../hooks/redux';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 function CityForm() {
 	const [query, setQuery] = useState('');
-	const [searchResults, setSearchResults] = useState<string[]>([]);
+	const debouncedQuery = useDebounce(query, 2000);
+	const { data, isLoading, error } = useCities(debouncedQuery);
+	const favorites = useAppSelector(state => state.favorites);
+	const dispatch = useDispatch();
+	const { storedValue, addValue } = useLocalStorage('favorites' , []);
+	const isCitiesNotFound = useMemo(() => debouncedQuery.length > 0 && data.length === 0, [debouncedQuery, data]);
+	const isShowCitiesList = useMemo(() => query.length > 0 && data.length !== 0, [query, data]);
 
-	const handleSearch = (value: string) => {
-		console.log('Searching for:', value);
-		setTimeout(() => {
-			const filteredNames = fakeNames.filter((name) =>
-				name.toLowerCase().includes(value.toLowerCase())
-			);
-			setSearchResults(filteredNames);
-		}, 300);
-	};
-
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		setQuery(value);
+	}, []);
 
-		if (value.length > 0) {
-			handleSearch(value);
-		} else {
-			setSearchResults([]);
-		}
-	};
+	const handleCityClick = (city: City) => {
+		addValue(city);
+		dispatch(addToFavorites(city));
+		setQuery('');
+	}
 
 	return (
 		<Menu>
 			<VStack spacing={4} align={"stretch"}>
-				<Input 
-					placeholder="Search for a city"
-					value={query}
-					onChange={handleInputChange}
-				/>
-				{searchResults.length > 0 && (
+				<InputGroup>
+					<InputLeftElement>
+						<CiSearch />
+					</InputLeftElement>
+					<Input
+						placeholder="Search for a city"
+						value={query}
+						onChange={handleInputChange}
+					/>
+					<InputRightElement>
+						{isLoading && <Spinner size="sm" /> }
+					</InputRightElement>
+				</InputGroup>
+				{isShowCitiesList && (
 					<List
 						borderWidth={1}
 						borderRadius={"md"}
@@ -53,14 +54,19 @@ function CityForm() {
 						bg={"white"}
 						boxShadow={"sm"}
 						>
-						{searchResults.map((name, index) => (
-							<ListItem key={index} p={2} _hover={{ bg: 'gray.100' }}>
-								<Text style={{ cursor: 'pointer' }}>{name}</Text>
+						{data.map(city => (
+							<ListItem key={`${city.name}-${city.state}`} p={2} _hover={{ bg: 'gray.100' }}>
+								<Text onClick={() => handleCityClick(city)} style={{ cursor: 'pointer' }}>{city.name}, {city.state}</Text>
 							</ListItem>
 						))}
 						</List>
+
 				)}
 			</VStack>
+
+			{isCitiesNotFound && <Text p={2} color={"red.500"}>City not found</Text>}
+			{error && <Text p={2} color={"red.500"}>Something went wrong. Try again later</Text>}
+
 		</Menu>
 	)
 }
