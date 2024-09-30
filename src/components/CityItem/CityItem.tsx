@@ -3,7 +3,6 @@ import { City } from '../../types/city.type';
 import { ListItem, Text } from '@chakra-ui/react';
 import { selectCity } from '../../redux/slices/selectedCity.slice';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import { addToFavorites } from '../../redux/slices/favorites.slice';
 import { useAppDispatch } from '../../hooks/redux';
 import { fetchWeather } from '../../redux/thunk/getWeather';
 import { addToLocalStorageThunk } from '../../redux/thunk/addToFavorites';

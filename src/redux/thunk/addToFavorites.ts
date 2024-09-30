@@ -9,19 +9,19 @@ export const addToLocalStorageThunk = createAsyncThunk(
 			const existFavoriteItems = localStorage.getItem('favorites');
 
 			if (!existFavoriteItems) {
-				localStorage.setItem('favorites', JSON.stringify(city));
+				localStorage.setItem('favorites', JSON.stringify([city]));
 
 				return city;
 			}
 
 			const favorites = JSON.parse(existFavoriteItems);
 
-			Object.assign(favorites, city);
-			localStorage.setItem('favorites', JSON.stringify(favorites));
+			const updatedFavorites = [...favorites, city]
+			localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
 
 			return city;
 		} catch (error) {
-			rejectWithValue('Something went wrong');
+			return rejectWithValue('Something went wrong');
 		}
 	}
 )

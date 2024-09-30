@@ -4,7 +4,7 @@ import { addToLocalStorageThunk  } from '../thunk/addToFavorites';
 
 const favoritesSlice = createSlice({
 	name: "favorites",
-	initialState: [] as City[],
+	initialState: JSON.parse(localStorage.getItem('favorites') || '[]') as City[],
 	reducers: {
 		addToFavorites: (state, { payload  }: PayloadAction<City>) => {
 			const isExist = state.some(city => city.name === payload.name);

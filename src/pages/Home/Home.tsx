@@ -5,6 +5,7 @@ import { Header } from '../../components/Header/Header';
 import CurrentWeather from '../../components/CurrentWeather/CurrentWeather';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { fetchWeather } from '../../redux/thunk/getWeather';
+import WeekForecast from '../../components/WeekForecast/WeekForecast';
 
 function Home() {
 	const dispatch = useAppDispatch();
@@ -24,6 +25,8 @@ function Home() {
 				<CityForm />
 
 				{weather && <CurrentWeather />}
+				
+				<WeekForecast />
 			</Box>
 		</>
 	)
