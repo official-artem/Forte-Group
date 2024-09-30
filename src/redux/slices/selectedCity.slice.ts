@@ -1,39 +1,41 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { City } from '../../types/city.type';
 import { WeatherResponse } from '../../types/weather.type';
-import { fetchWeather } from '../thunk/getWeather';
+import { fetchWeather } from '../thunk/fetchWeather';
+import { InitialCityState } from '../../types/selectedCity.type';
+import { loadState, saveState } from '../../utils/localStorage.utils';
 
-interface SelectedCityState {
-	weather: WeatherResponse | null,
-	city: City | null
-}
-
-const initialState: SelectedCityState = {
+const initialState: InitialCityState = {
 	city: null,
 	weather: null,
 };
 
 export const selectedCitySlice = createSlice({
 	name: "selectedCity",
-	initialState,
+	initialState:(loadState('selectedCity') ?? initialState) as InitialCityState,
 	reducers: {
 		selectCity: (state, { payload }: PayloadAction<City>) => {
 			state.city = payload;
+			saveState('selectedCity', state);
 		},
 		setWeather: (state, { payload }: PayloadAction<WeatherResponse>) => {
 			state.weather = payload;
+			saveState('selectedCity', state);
 		}
 	},
 	extraReducers(builder) {
 		builder.addCase(fetchWeather.fulfilled, (state, { payload }) => {
-				if (payload) {
+					state.city = payload.city;
 					state.weather = payload.weather;
-					state.city = payload.city
-				}
+
+					saveState('selectedCity', state);
+
 		});
 		builder.addCase(fetchWeather.rejected, (state) => {
 			state.weather = null;
 			state.city = null;
+			
+			saveState('selectedCity', state);
 		});
 	},
 })

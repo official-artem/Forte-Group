@@ -7,8 +7,6 @@ import FavoritesList from '../FavoritesList/FavoritesList';
 export const Header = () => {
 	const favorites = useAppSelector(state => state.favorites);
 
-	console.log(favorites)
-
 	return (
 		<Box 
 			bg={'gray.100'} 

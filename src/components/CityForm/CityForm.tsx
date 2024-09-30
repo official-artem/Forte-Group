@@ -43,7 +43,7 @@ function CityForm() {
 						>
 						{data.map(city => (
 							<CityItem 
-								key={`${city.name}-${city.state}`} 
+								key={crypto.randomUUID()} 
 								setQuery={setQuery} 
 								city={city }
 							/>
