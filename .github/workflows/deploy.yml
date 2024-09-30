@@ -21,9 +21,10 @@ jobs:
         run: npm install
 
       - name: Build the project
-				env:
-					VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
-					VITE_ANOTHER_SECRET: ${{ secrets.VITE_ANOTHER_SECRET }}
+        # Передаємо змінні оточення у крок збірки
+        env:
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}  # Додаємо сюди ваші секрети
+          VITE_ANOTHER_SECRET: ${{ secrets.VITE_ANOTHER_SECRET }}  # Додаємо інші змінні
         run: npm run build
 
       - name: Deploy to GitHub Pages
