@@ -1,21 +1,14 @@
-import { Input, InputGroup, InputLeftElement, InputRightElement, List, ListItem, Menu, Spinner, Text, VStack } from '@chakra-ui/react';
+import { Input, InputGroup, InputLeftElement, InputRightElement, List, Menu, Spinner, Text, VStack } from '@chakra-ui/react';
 import { memo, useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import useCities from '../../hooks/useCities';
 import useDebounce from '../../hooks/useDebounce';
 import { CiSearch } from "react-icons/ci";
-import { addToFavorites } from '../../redux/slices/favorites.slice';
-import { City } from '../../types/city.type';
-import { useAppSelector } from '../../hooks/redux';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import CityItem from '../CityItem/CityItem';
 
 function CityForm() {
 	const [query, setQuery] = useState('');
 	const debouncedQuery = useDebounce(query, 2000);
 	const { data, isLoading, error } = useCities(debouncedQuery);
-	const favorites = useAppSelector(state => state.favorites);
-	const dispatch = useDispatch();
-	const { storedValue, addValue } = useLocalStorage('favorites' , []);
 	const isCitiesNotFound = useMemo(() => debouncedQuery.length > 0 && data.length === 0, [debouncedQuery, data]);
 	const isShowCitiesList = useMemo(() => query.length > 0 && data.length !== 0, [query, data]);
 
@@ -23,12 +16,6 @@ function CityForm() {
 		const value = e.target.value;
 		setQuery(value);
 	}, []);
-
-	const handleCityClick = (city: City) => {
-		addValue(city);
-		dispatch(addToFavorites(city));
-		setQuery('');
-	}
 
 	return (
 		<Menu>
@@ -55,9 +42,11 @@ function CityForm() {
 						boxShadow={"sm"}
 						>
 						{data.map(city => (
-							<ListItem key={`${city.name}-${city.state}`} p={2} _hover={{ bg: 'gray.100' }}>
-								<Text onClick={() => handleCityClick(city)} style={{ cursor: 'pointer' }}>{city.name}, {city.state}</Text>
-							</ListItem>
+							<CityItem 
+								key={`${city.name}-${city.state}`} 
+								setQuery={setQuery} 
+								city={city }
+							/>
 						))}
 						</List>
 

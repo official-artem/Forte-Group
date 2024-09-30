@@ -18,8 +18,8 @@ const useLocalStorage = (key: string, initialValue: City[]) => {
 			const isExist = storedValue.some((item: City) => item.name === value.name);
 
 			if (!isExist) {
-				setStoredValue([...storedValue, value]);
-				localStorage.setItem(key, JSON.stringify([...storedValue, value]));
+				setStoredValue([value]);
+				localStorage.setItem(key, JSON.stringify([value]));
 			}
 		} catch (error) {
 			console.error('Error saving localStorage', error);
@@ -36,7 +36,7 @@ const useLocalStorage = (key: string, initialValue: City[]) => {
 		}
 	}
 
-	return { storedValue, addValue, removeValue } as const;
+	return [ storedValue, addValue, removeValue ] as const;
 }
 
 export default useLocalStorage;

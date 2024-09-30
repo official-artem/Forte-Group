@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { City } from '../../types/city.type';
+import { addToLocalStorageThunk  } from '../thunk/addToFavorites';
 
 const favoritesSlice = createSlice({
 	name: "favorites",
@@ -17,7 +18,14 @@ const favoritesSlice = createSlice({
 
 		removeFromFavorites: (state, { payload }: PayloadAction<City>) => {
 			return state.filter(city => city.name !== payload.name);
-		}
+		},
+	},
+	extraReducers(builder) {
+		builder.addCase(addToLocalStorageThunk.fulfilled, (state, { payload }) => {
+			if (payload) {
+				state.push(payload)
+			}
+		});
 	}
 })
 
