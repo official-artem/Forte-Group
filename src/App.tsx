@@ -5,10 +5,9 @@ import { ChakraProvider } from '@chakra-ui/react';
 function App() {
   return (
     <ChakraProvider>
-      <BrowserRouter>
+      <BrowserRouter basename='/forte-group/'>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/a" element={<Home />} />
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
